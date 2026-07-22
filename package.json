@@ -1,0 +1,28 @@
+{
+  "name": "rl-barber-portfolio",
+  "version": "1.0.0",
+  "description": "Premium portfolio website for RL Barber",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.0",
+    "tailwindcss": "^3.3.0",
+    "postcss": "^8.4.30",
+    "autoprefixer": "^10.4.16",
+    "framer-motion": "^10.16.4",
+    "gsap": "^3.12.2",
+    "react-icons": "^4.12.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "@types/node": "^20.5.0",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7"
+  }
+}

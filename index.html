@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL Barber - Premium Luxury Barber Salon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        /* Cursor */
+        .cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #D4AF37;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+            mix-blend-mode: screen;
+        }
+
+        .cursor-outline {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #D4AF37;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            mix-blend-mode: screen;
+            transition: all 0.1s ease;
+        }
+
+        .cursor-outline.active {
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e0c060;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            padding: 20px 40px;
+            background: transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            background: #D4AF37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #0a0a0a;
+            font-size: 20px;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .logo-text h1 {
+            font-size: 18px;
+            letter-spacing: 0.1em;
+            color: #D4AF37;
+        }
+
+        .logo-text p {
+            font-size: 10px;
+            color: #999;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #D4AF37;
+        }
+
+        .btn-gold {
+            background-color: #D4AF37;
+            color: #0a0a0a;
+            font-weight: 600;
+            border: 2px solid #D4AF37;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold:hover {
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #D4AF37;
+            border: 2px solid #D4AF37;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        #home {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+            padding-top: 80px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('public/images/1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: 1;
+            animation: zoom 20s ease-in-out infinite;
+        }
+
+        @keyframes zoom {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2rem, 8vw, 5rem);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .hero-content h1 span {
+            color: #D4AF37;
+            display: block;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 30px;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 40px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        section.dark-bg {
+            background-color: #111111;
+        }
+
+        section.darker-bg {
+            background-color: #171717;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        section h2 {
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        section h2 span {
+            color: #D4AF37;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(23, 23, 23, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            background: rgba(23, 23, 23, 0.95);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #D4AF37;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: #999;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px;
+            text-align: center;
+        }
+
+        footer p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #D4AF37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a0a0a;
+            cursor: pointer;
+            font-size: 20px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            nav ul {
+                gap: 15px;
+            }
+
+            nav a {
+                display: none;
+            }
+
+            section {
+                padding: 50px 20px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-gold, .btn-outline {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+     <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo">
+            <div class="logo-circle">R</div>
+            <div class="logo-text">
+                <h1>RL BARBER</h1>
+                <p>PREMIUM GROOMING</p>
+            </div>
+        </div>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#expertise">Expertise</a></li>
+            <li><a href="#credentials">Credentials</a></li>
+            <li><a href="#profile">About</a></li>
+            <li><a href="#mission">Mission</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#booking"><button class="btn-gold">Book Appointment</button></a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>
+                <span>PRECISION.</span>
+                <span>PASSION.</span>
+                <span>PROFESSIONALISM.</span>
+            </h1>
+            <p>Every haircut tells a story of craftsmanship, confidence, and dedication.</p>
+            <div class="hero-buttons">
+                <a href="#portfolio" style="text-decoration: none;"><button class="btn-gold">View Portfolio</button></a>
+                <a href="#booking" style="text-decoration: none;"><button class="btn-outline">Book Appointment</button></a>
+            </div>
+        </div>
+    </section>
+
+     <!-- About Section - Introduction -->
+    <section id="about" class="dark-bg">
+        <div class="section-container">
+            <h2>CREATIVE <span>PORTFOLIO</span></h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-top: 40px;">
+                <div style="height: 400px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.1)); border-radius: 20px; border: 3px solid #D4AF37; display: flex; align-items: center; justify-content: center; color: #999; background-image: url('public/images/3.jpg'); background-size: cover; background-position: center;">
+                </div>
+                <div>
+                    <p style="color: #D4AF37; font-weight: bold; margin-bottom: 20px; font-size: 16px;">INTRODUCTION</p>
+                    <h3 style="font-size: 32px; margin-bottom: 20px;">RL Barber Premium Portfolio</h3>
+                    <p style="color: #ccc; line-height: 1.8; margin-bottom: 20px;">RL Barber is passionate about delivering precision haircuts, confidence, and exceptional grooming experiences. Every client receives professional service with meticulous attention to detail and craftsmanship.</p>
+                    <p style="color: #ccc; line-height: 1.8; margin-bottom: 20px;">With years of dedicated expertise, I combine traditional barbering techniques with modern trends to create timeless, sophisticated looks that enhance confidence and personal style.</p>
+                    <p style="color: #D4AF37; font-weight: bold; font-size: 14px;">10+ Years of Professional Experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="darker-bg">
+        <div class="section-container">
+            <h2>Our <span>Portfolio</span></h2>
+            <p style="text-align: center; color: #999; margin-bottom: 40px;">
+               Gallery of professional haircuts, fades, and grooming masterpieces
+            </p>
+           <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/4.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                    <h3>Premium Fade</h3>
+                    <p>Professional fade cut with precision lines</p>
+                </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/8.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Modern Mullet</h3>
+                   <p>Contemporary mullet with sharp styling</p>
+                </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/6.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Classic Look</h3>
+                   <p>Timeless barber style with modern twist</p>
+                </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/2.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Burst Fade</h3>
+                   <p>Sharp burst fade with perfect lines</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/6.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Textured Crop</h3>
+                   <p>Modern textured crop style</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/7.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>French Crop</h3>
+                   <p>Classic French crop with style</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/8.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>High Fade</h3>
+                   <p>High fade with precision detail</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/9.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Mid Fade</h3>
+                   <p>Mid fade with clean lines</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/6.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Taper Fade</h3>
+                   <p>Smooth taper fade transition</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/13.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Skin Fade</h3>
+                   <p>Ultra clean skin fade</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/15.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Hair Treatment</h3>
+                   <p>Premium hair treatment service</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/16.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Kids Cut</h3>
+                   <p>Professional kids haircuts</p>
+               </div>
+               <div class="card" style="cursor: pointer; overflow: hidden;">
+                   <div style="width: 100%; height: 280px; border-radius: 10px; margin-bottom: 15px; background-image: url('public/images/12.jpg'); background-size: cover; background-position: center; border: 2px solid #D4AF37;"></div>
+                   <h3>Premium Styling</h3>
+                   <p>Premium styling and finishing</p>
+               </div>
+           </div>
+       </div>
+    </section>
+
+
+    <!-- Expertise Detailed Section -->
+    <section id="expertise" class="dark-bg">
+        <div class="section-container">
+            <h2><span>EXPERTISE</span></h2>
+            <div class="expertise-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; align-items: center;">
+                <div style="height: 400px; border-radius: 20px; border: 2px solid #D4AF37; background-image: url('public/images/11.jpg'); background-size: cover; background-position: center;"></div>
+                <div>
+                    <div style="font-size: 14px; line-height: 2; color: #ccc;">
+                        <p style="color: #D4AF37; font-weight: bold; margin-bottom: 15px; font-size: 18px;">SCISSOR TECHNIQUES</p>
+                        <p>• Scissor Over Comb</p>
+                        <p style="color: #D4AF37; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Perming & Treatment</p>
+                        <p style="margin-left: 10px;">• Taper Fade</p>
+                        <p style="margin-left: 10px;">• Burst Fade</p>
+                        <p style="margin-left: 10px;">• Modern Mullet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Precision Cut Section -->
+    <section id="specialization" class="darker-bg">
+        <div class="section-container">
+            <h2 style="text-align: left; margin-bottom: 40px;"><span>PRECISION CUT</span><br>LAYERING SPECIALIST</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;">
+                <div style="height: 350px; border-radius: 20px; border: 2px solid #D4AF37; background-image: url('public/images/15.jpg'); background-size: cover; background-position: center;"></div>
+                <div>
+                    <p style="color: #D4AF37; font-weight: bold; margin-bottom: 20px;">Specialties:</p>
+                    <div style="font-size: 14px; line-height: 2.2; color: #ccc;">
+                        <p>• Advance scissor cut techniques</p>
+                        <p>• Face shapes consultation</p>
+                        <p>• Personalized cut hair styling</p>
+                        <p>• Clean finishing and detailing</p>
+                        <p>• Professional men's grooming</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Credentials Section -->
+    <section id="credentials" class="dark-bg">
+        <div class="section-container">
+            <h2><span>CREDENTIALS</span></h2>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 40px;">
+                <div>
+                    <p style="color: #D4AF37; font-weight: bold; margin-bottom: 15px;">Certifications</p>
+                    <div style="font-size: 14px; line-height: 2; color: #ccc;">
+                        <p>• License Barber | Hair dressers</p>
+                        <p>• NCII Barbering & NCIII Hair dressing certified</p>
+                        <p>• Owner RL BARBER SHOP</p>
+                        <p>• 10 years of professional experience</p>
+                    </div>
+                </div>
+                <div>
+                    <p style="color: #D4AF37; font-weight: bold; margin-bottom: 15px;">Advanced Training</p>
+                    <div style="font-size: 14px; line-height: 2; color: #ccc;">
+                        <p>• 4 time wahl seminar</p>
+                        <p>• 3 time accomplishment seminar</p>
+                        <p>• Barber educator with advanced techniques</p>
+                        <p>• Barber educator Hari-Oz collaboration</p>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 500px; background-image: url('public/images/19.jpg'); border-radius: 20px; border: 2px solid #D4AF37; margin-top: 40px; background-size: cover; background-position: center;"></div>
+        </div>
+    </section>
+
+    <!-- Barber Profile Section -->
+    <section id="profile" class="darker-bg">
+        <div class="section-container">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                <div style="height: 950px; border-radius: 20px; border: 2px solid #D4AF37; background-image: url('public/images/13.jpg'); background-size: cover; background-position: center;"></div>
+                <div>
+                    <h2 style="text-align: left; margin-bottom: 30px;">RENCE LAGMAN</h2>
+                    <p style="color: #D4AF37; font-weight: bold; margin-bottom: 15px;">About me:</p>
+                    <div style="font-size: 14px; line-height: 1.8; color: #ccc; margin-bottom: 20px;">
+                        <p>I am a passionate and dedicated professional barber with a strong commitment to excellence in men's grooming. I take pride in delivering precision haircuts, clean fades, beard grooming, and personalized styles that suit each client's preferences and lifestyle.</p>
+                        <p style="margin-top: 15px;">I believe that barbering is more than just cutting hair—it is about building confidence, creating lasting relationships, and providing an exceptional customer experience. I am committed to maintaining high standards of hygiene, professionalism, and customer service while continuously improving my skills through ongoing learning and training.</p>
+                        <p style="margin-top: 15px;">My goal is to contribute my expertise to a professional barbershop where I can continue to grow, provide outstanding service, and help clients look and feel their best every day.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Freestyle Art Section -->
+    <section id="freestyle" class="dark-bg">
+        <div class="section-container">
+            <h2><span>FREESTYLE ART</span></h2>
+            <p style="text-align: center; color: #D4AF37; font-weight: bold; margin-bottom: 30px;">Freestyle Art & Fashion</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="card" style="cursor: pointer; overflow: hidden;">
+                    <div style="width: 100%; height: 300px; background-image: url('public/images/5.jpg'); background-size: cover; background-position: center; border-radius: 10px; border: 2px solid #D4AF37; margin-bottom: 15px;"></div>
+                    <p style="color: #999;">Creative freestyle barbering design</p>
+                </div>
+                     <div class="card" style="cursor: pointer; overflow: hidden;">
+                    <div style="width: 100%; height: 300px; background-image: url('public/images/12.jpg'); background-size: cover; background-position: center; border-radius: 10px; border: 2px solid #D4AF37; margin-bottom: 15px;"></div>
+                    <p style="color: #999;">Creative freestyle barbering design</p>
+                </div>
+                     <div class="card" style="cursor: pointer; overflow: hidden;">
+                    <div style="width: 100%; height: 300px; background-image: url('public/images/15.jpg'); background-size: cover; background-position: center; border-radius: 10px; border: 2px solid #D4AF37; margin-bottom: 15px;"></div>
+                    <p style="color: #999;">Creative freestyle barbering design</p>
+                </div>
+            </div>
+            <p style="text-align: left; color: #999; margin-top: 30px; font-size: 14px; line-height: 1.8;">I express creativity through freestyle barbering by combining modern haircut techniques, artistic design, and current fashion trends. My goal is to create personalized styles that complement each client's personality, face shape, and lifestyle while maintaining precision, originality, and attention to detail.</p>
+        </div>
+    </section>
+
+    <!-- Fade Master Section -->
+    <section id="fade-master" class="darker-bg">
+        <div class="section-container">
+            <h2><span>FADE MASTER</span> EXPERT</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; align-items: start;">
+                <div style="font-size: 14px; line-height: 2; color: #ccc;">
+                    <p>• Every fade is a masterpiece crafted with precision</p>
+                    <p>• A perfect fade is not just a haircut—it's confidence</p>
+                    <p>• Precision. Passion. Perfection.</p>
+                    <p>• Mastering fades, one client at a time</p>
+                    <p>• Where skill meets style</p>
+                    <p>• Clean fades. Sharp lines. Exceptional results.</p>
+                    <p>• Your style begins with a flawless fade</p>
+                    <p>• Excellence is in every detail</p>
+                    <p>• Creating confidence through every cut.</p>
+                    <p>• A true barber doesn't just cut hair—he creates art</p>
+                    <p>• Every client deserves a fade that speaks for itself</p>
+                    <p>• Fade with precision. Finish with perfection.</p>
+                </div>
+                <div style="height: 700px; border-radius: 20px; border: 2px solid #D4AF37; background-image: url('public/images/10.jpg'); background-size: cover; background-position: center;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Craftmanship Section -->
+    <section id="craftmanship" class="dark-bg">
+        <div class="section-container">
+            <h2><span>CRAFTMANSHIP</span></h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; align-items: center;">
+                <div style="height: 900px; border-radius: 20px; border: 2px solid #D4AF37; background-image: url('public/images/16.jpg'); background-size: cover; background-position: center;"></div>
+                <div style="font-size: 14px; line-height: 2.2; color: #ccc;">
+                    <p>"Craftsmanship is the pursuit of excellence in every cut"</p>
+                    <p style="margin-top: 20px;">"True craftsmanship is revealed in the smallest details"</p>
+                    <p style="margin-top: 20px;">"Precision is the foundation of exceptional craftsmanship"</p>
+                    <p style="margin-top: 20px;">"Every haircut reflects the barber's dedication and skill"</p>
+                    <p style="margin-top: 20px;">"Great craftsmanship transforms a haircut into an experience"</p>
+                    <p style="margin-top: 20px;">"Quality is never rushed—it is carefully crafted"</p>
+                    <p style="margin-top: 20px;">"Mastery is achieved through passion, practice, and precision"</p>
+                    <p style="margin-top: 20px;">"Every client deserves the highest standard of craftsmanship"</p>
+                    <p style="margin-top: 20px;">"Craftsmanship is where creativity meets discipline"</p>
+                    <p style="margin-top: 20px;">"Excellence is crafted, not created by chance"</p>
+                    <p style="margin-top: 20px;">"The difference is always in the details"</p>
+                    <p style="margin-top: 20px;">"A barber's craftsmanship is measured by consistency, precision, and client satisfaction"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Statement Section -->
+    <section id="mission" class="darker-bg">
+        <div class="section-container">
+            <h2><span>MISSION STATEMENT</span></h2>
+            <div style="text-align: center; margin-top: 40px; font-size: 16px; line-height: 2; color: #ccc; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <p style="color: #D4AF37; font-weight: bold; margin-bottom: 30px; font-size: 18px;">"My mission is to deliver exceptional barbering services through precision, professionalism, and genuine care, helping every client look their best and feel confident."</p>
+                
+                <p style="color: #D4AF37; font-weight: bold; margin-top: 30px; margin-bottom: 20px;">Alternative Mission Statements</p>
+                
+                <p>"To provide world-class grooming services with quality, consistency, and integrity."</p>
+                <p style="margin-top: 15px;">"To create confidence through exceptional craftsmanship, personalized service, and continuous improvement."</p>
+                <p style="margin-top: 15px;">"To exceed client expectations by delivering precision haircuts in a clean, welcoming, and professional environment."</p>
+                <p style="margin-top: 15px;">"To inspire confidence and self-expression through expert barbering and outstanding customer care."</p>
+                <p style="margin-top: 15px;">"To uphold the highest standards of barbering by combining skill, creativity, and professionalism in every service."</p>
+                <p style="margin-top: 15px;">"To build lasting relationships by delivering excellence, trust, and satisfaction with every haircut."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Appointment Section -->
+    <section id="booking" class="dark-bg">
+        <div class="section-container" style="max-width: 600px;">
+            <h2 style="text-align: center; margin-bottom: 40px;">Book Your <span>Appointment</span></h2>
+            <form style="background: rgba(23, 23, 23, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 20px; padding: 30px;">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Full Name</label>
+                    <input type="text" required style="width: 100%; padding: 12px; background: rgba(10, 10, 10, 0.8); border: 1px solid #D4AF37; border-radius: 10px; color: #fff; font-family: 'Poppins', sans-serif;" placeholder="Your name">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Phone Number</label>
+                    <input type="tel" required style="width: 100%; padding: 12px; background: rgba(10, 10, 10, 0.8); border: 1px solid #D4AF37; border-radius: 10px; color: #fff; font-family: 'Poppins', sans-serif;" placeholder="+1 (555) 000-0000">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email</label>
+                    <input type="email" required style="width: 100%; padding: 12px; background: rgba(10, 10, 10, 0.8); border: 1px solid #D4AF37; border-radius: 10px; color: #fff; font-family: 'Poppins', sans-serif;" placeholder="your@email.com">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Preferred Date</label>
+                    <input type="date" required style="width: 100%; padding: 12px; background: rgba(10, 10, 10, 0.8); border: 1px solid #D4AF37; border-radius: 10px; color: #fff; font-family: 'Poppins', sans-serif;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Service</label>
+                    <select required style="width: 100%; padding: 12px; background: rgba(10, 10, 10, 0.8); border: 1px solid #D4AF37; border-radius: 10px; color: #fff; font-family: 'Poppins', sans-serif;">
+                        <option value="">Select a service</option>
+                        <option value="haircut">Haircut</option>
+                        <option value="fade">Fade</option>
+                        <option value="beard">Beard Grooming</option>
+                        <option value="color">Hair Color</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-gold" style="width: 100%; padding: 15px; font-size: 16px; margin-top: 10px;">Book Appointment</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="darker-bg">
+        <div class="section-container">
+            <h2>Get In <span>Touch</span></h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>📞 Phone</h3>
+                    <p><a href="tel:+15551234567" style="color: #D4AF37; text-decoration: none;">+1 (555) 123-4567</a></p>
+                </div>
+                <div class="card">
+                    <h3>📧 Email</h3>
+                    <p><a href="mailto:hello@rlbarber.com" style="color: #D4AF37; text-decoration: none;">hello@rlbarber.com</a></p>
+                </div>
+                <div class="card">
+                    <h3>📍 Location</h3>
+                    <p>123 Luxury Lane<br>Premium City</p>
+                </div>
+                <div class="card">
+                    <h3>⏰ Hours</h3>
+                    <p>Mon-Sat: 10am-8pm<br>Sun: 12pm-6pm</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 RL Barber. All rights reserved. Premium Grooming Since 2019.</p>
+        <p style="margin-top: 10px; font-size: 12px;">www.arelbarber.com.ph | @rl_barber30</p>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop">↑</div>
+
+    <script>
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        document.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = posX + 'px';
+            cursorDot.style.top = posY + 'px';
+
+            cursorOutline.style.left = posX + 'px';
+            cursorOutline.style.top = posY + 'px';
+        });
+
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.classList.contains('interactive')) {
+                cursorOutline.classList.add('active');
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (e.target.tagName === 'BUTTON' || e.target.classList.contains('interactive')) {
+                cursorOutline.classList.remove('active');
+            }
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Active link highlighting
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
